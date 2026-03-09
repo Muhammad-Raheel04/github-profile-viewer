@@ -5,12 +5,20 @@ import ProfileCard from './components/ProfileCard'
 import Searchbar from './components/Searchbar'
 import RepoCard from './components/RepoCard'
 import { useEffect, useState } from 'react'
+import Spinner from './components/Spinner'
 function App() {
   const [username, setUsername] = useState("");
   const [userRepoData, setUserRepoData] = useState(null)
   const [data, setUserData] = useState(null)
+  const [loading,setLoading]=useState(false);
   useEffect(() => {
-    if (!username) return;
+    if (!username) {
+      setUserData(null);
+      setUserRepoData(null);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
     const timer = setTimeout(async() => {
       try{
         const userRes=await  fetch(`https://api.github.com/users/${username}`);
@@ -23,6 +31,10 @@ function App() {
 
       }catch(error){
         console.log(error);
+        setUserData(null);
+        setUserRepoData(null);
+      }finally{
+        setLoading(false);
       }
     }, 500)
     return () => clearTimeout(timer);
@@ -33,10 +45,16 @@ function App() {
       <Header></Header>
       <Searchbar username={username} setUsername={setUsername} />
       {
-        data ? <ProfileCard userData={data} /> : <EmptyState />
+        loading && <div className='flex justify-center items-center gap-3 text-center mt-4 text-gray-500'><Spinner/> <span className='mt-5'>Loading...</span></div>
       }
       {
-        username && userRepoData ? <RepoCard userRepoData={userRepoData}></RepoCard> : ''
+        !loading && !data && <EmptyState/>
+      }
+      {
+        !loading && data && <ProfileCard userData={data} /> 
+      }
+      {
+        !loading && username && userRepoData ? <RepoCard userRepoData={userRepoData}></RepoCard> : ''
       }
     </>
   )
