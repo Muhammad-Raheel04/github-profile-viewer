@@ -18,7 +18,7 @@ const RepoCard = ({ userRepoData }) => {
             <div className="grid md:grid-cols-3 gap-4">
                 {userRepoData.map((repo) => (
                     <div key={repo.id} className="p-4 bg-white rounded-xl shadow hover:shadow-lg transition-shadow duration-200">
-                        <h3 className="text-blue-500 font-semibold text-lg">{repo.name}</h3>
+                        <h3 className="text-blue-500 font-semibold text-lg"><a href={repo.html_url} target='_blank' className='hover:underline'>{repo.name}</a></h3>
                         <p className="text-gray-600 mb-2">{repo.description || "No description"}</p>
                         <div className="flex flex-wrap items-center gap-4 text-gray-500 text-sm">
                             {repo.language && (
